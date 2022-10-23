@@ -1,0 +1,160 @@
+<!DOCTYPE html><html lang="en" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>虚拟机网络模型 | 锡城长颈鹿的博客</title><meta name="keywords" content="介绍"><meta name="author" content="锡城长颈鹿"><meta name="copyright" content="锡城长颈鹿"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="想改一下虚拟机Ubuntu的网络配置，发现大寄特寄，于是迅速学习一下虚拟机网络模型，顺便复习下Ubuntu的网络配置  一、虚拟机网络模型在虚拟化技术没出现之前，构成网络的元素都是实体的物理设备，比如交换机、路由器、网线等等，人们想要构建一个小型的局域网自己玩玩，都要买各种设备，成本高还不灵活。虚拟化技术普及之后，云计算开始大行其道，我们在自己的单机上就可以建各种虚拟机，想怎么玩就怎么玩。目前虚">
+<meta property="og:type" content="article">
+<meta property="og:title" content="虚拟机网络模型">
+<meta property="og:url" content="http://xichengchangjinglu.github.io/2022/10/23/%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%BD%91%E7%BB%9C%E6%A8%A1%E5%9E%8B/index.html">
+<meta property="og:site_name" content="锡城长颈鹿的博客">
+<meta property="og:description" content="想改一下虚拟机Ubuntu的网络配置，发现大寄特寄，于是迅速学习一下虚拟机网络模型，顺便复习下Ubuntu的网络配置  一、虚拟机网络模型在虚拟化技术没出现之前，构成网络的元素都是实体的物理设备，比如交换机、路由器、网线等等，人们想要构建一个小型的局域网自己玩玩，都要买各种设备，成本高还不灵活。虚拟化技术普及之后，云计算开始大行其道，我们在自己的单机上就可以建各种虚拟机，想怎么玩就怎么玩。目前虚">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://www.leixue.com/uploads/2020/09/Cloud-computing.jpg">
+<meta property="article:published_time" content="2022-10-23T13:40:32.563Z">
+<meta property="article:modified_time" content="2022-10-23T13:59:07.669Z">
+<meta property="article:author" content="锡城长颈鹿">
+<meta property="article:tag" content="介绍">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://www.leixue.com/uploads/2020/09/Cloud-computing.jpg"><link rel="shortcut icon" href="https://pic4.zhimg.com/v2-02a3ed4cbe7ddc41b144752c25388a7b_b.jpg"><link rel="canonical" href="http://xichengchangjinglu.github.io/2022/10/23/%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%BD%91%E7%BB%9C%E6%A8%A1%E5%9E%8B/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: 'Copy successfully',
+    error: 'Copy error',
+    noSupport: 'The browser does not support'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: 'Just',
+    min: 'minutes ago',
+    hour: 'hours ago',
+    day: 'days ago',
+    month: 'months ago'
+  },
+  copyright: undefined,
+  lightbox: 'mediumZoom',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '虚拟机网络模型',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2022-10-23 21:59:07'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 6.2.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="https://pic4.zhimg.com/v2-02a3ed4cbe7ddc41b144752c25388a7b_b.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">16</div></a><a href="/tags/"><div class="headline">Tags</div><div class="length-num">10</div></a><a href="/categories/"><div class="headline">Categories</div><div class="length-num">0</div></a></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://www.leixue.com/uploads/2020/09/Cloud-computing.jpg')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">锡城长颈鹿的博客</a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">虚拟机网络模型</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">Created</span><time class="post-meta-date-created" datetime="2022-10-23T13:40:32.563Z" title="Created 2022-10-23 21:40:32">2022-10-23</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">Updated</span><time class="post-meta-date-updated" datetime="2022-10-23T13:59:07.669Z" title="Updated 2022-10-23 21:59:07">2022-10-23</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="虚拟机网络模型"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">Post View:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><blockquote>
+<p>想改一下虚拟机Ubuntu的网络配置，发现大寄特寄，于是迅速学习一下虚拟机网络模型，顺便复习下Ubuntu的网络配置</p>
+</blockquote>
+<h1 id="一、虚拟机网络模型"><a href="#一、虚拟机网络模型" class="headerlink" title="一、虚拟机网络模型"></a>一、虚拟机网络模型</h1><p>在虚拟化技术没出现之前，构成网络的元素都是实体的物理设备，比如交换机、路由器、网线等等，人们想要构建一个小型的局域网自己玩玩，都要买各种设备，成本高还不灵活。虚拟化技术普及之后，云计算开始大行其道，我们在自己的单机上就可以建各种虚拟机，想怎么玩就怎么玩。<br>目前虚拟机的网络模型常见的有桥接模式，NAT模式，主机模式，内部网络模式，这一点的选择在VMware Workstation创建虚拟机的环境可以自行选择网络模型。</p>
+<h2 id="（1）桥接模式（Bridge-Adpater）"><a href="#（1）桥接模式（Bridge-Adpater）" class="headerlink" title="（1）桥接模式（Bridge Adpater）"></a>（1）桥接模式（Bridge Adpater）</h2><p>虚拟机桥接网络模型就是使用虚拟交换机（Linux Bridge），将虚拟机和物理机连接起来，它们处于同一个网段，IP 地址是一样的。在这个网络模型中满足以下特点，虚拟机之间可以彼此通信，虚拟机和主机之间可以彼此通信，当主机连上网时，虚拟机也可以上网。桥接网络一般也只适用于桌面虚拟机或者小规模网络这种简单的形式。<br><img src="https://pica.zhimg.com/80/v2-b1c69aebddf94f48e2f7cce295958367_720w.webp?source=1940ef5c"></p>
+<h2 id="（2）NAT模式"><a href="#（2）NAT模式" class="headerlink" title="（2）NAT模式"></a>（2）NAT模式</h2><p>又可以分为NAT和NAT网络两种，根据 NAT 的原理，虚拟机所在的网络和物理机所在的网络不在同一个网段，虚拟机要访问物理所在网络必须经过一个地址转换的过程，也就是说在虚拟机网络内部需要内置一个虚拟的 NAT 设备来做这件事。NAT和NAT网络的区别主要在于虚拟机能否相互通信。这种网络模型具有如下特点，虚拟机可以访问主机，但是主机不能访问虚拟机，除非设置了端口转发，如果主机可以上外网，那么虚拟机也可以。<br>在NAT中，主机上的虚拟机之间是互相隔离的，彼此不能通信，它们有独立的网络栈，独立的虚拟 NAT 设备，当然如果设置了端口转发也是可以进行通信的。<br><img src="https://pica.zhimg.com/80/v2-dc9a24cd3553bca32b76753b1004657a_720w.webp?source=1940ef5c"><br>在NAT网络中，虚拟机之间共享虚拟 NAT 设备，彼此互通。<br><img src="https://pic3.zhimg.com/80/v2-fc29baec66d3cafe538d86f015c3fd24_720w.webp?source=1940ef5c"></p>
+<h1 id="二、Ubuntu的网络配置"><a href="#二、Ubuntu的网络配置" class="headerlink" title="二、Ubuntu的网络配置"></a>二、Ubuntu的网络配置</h1><h2 id="（1）网络配置工具Netplan"><a href="#（1）网络配置工具Netplan" class="headerlink" title="（1）网络配置工具Netplan"></a>（1）网络配置工具Netplan</h2><p>我的系统环境如下，一开始不知道有这个工具，在配置文件里面暴风寻找发现找不到，最后发现原来内置了这个玩意。Netplan是一个用于配置 Linux 网络的简单工具。 通过 Netplan ，你只需用一个 YAML 文件描述每个网络接口需要配置成啥样即可。 根据这个配置描述， Netplan 便可帮你生成所有需要的配置，不管你选用的底层管理工具是啥。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">xichengchangjinglu@xichengchangjinglu-virtual-machine:/etc/netplan$ uname -a</span><br><span class="line">Linux xichengchangjinglu-virtual-machine 5.15.0-52-generic #58-Ubuntu SMP Thu Oct 13 08:03:55 UTC 2022 x86_64 x86_64 x86_64 GNU/Linux</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p><strong>工作原理</strong><br>Netplan 从 &#x2F;etc&#x2F;netplan&#x2F;*.yaml 读取配置，配置可以是管理员或者系统安装人员配置； 也可以是云镜像或者其他操作系统部署设施自动生成。 在系统启动阶段早期， Netplan 在 &#x2F;run 目录生成好配置文件并将设备控制权交给相关后台程序。<br><img src="https://pic1.zhimg.com/80/v2-cf06cc4b36cde365c46fd36a320bab53_720w.webp?source=1940ef5c"><br><strong>命令</strong><br>Netplan 操作命令提供两个子命令：</p>
+<ul>
+<li>netplan generate ：以 &#x2F;etc&#x2F;netplan 配置为管理工具生成配置；</li>
+<li>netplan apply ：应用配置(以便生效)，必要时重启管理工具；</li>
+</ul>
+<p>因此在调整 &#x2F;etc&#x2F;netplan 配置后，需要执行netplan apply命令方能生效。</p>
+<h2 id="（2）网络配置实践"><a href="#（2）网络配置实践" class="headerlink" title="（2）网络配置实践"></a>（2）网络配置实践</h2><p>我们可以在配置文件中进行修改，Ubuntu也为我们提供了很便捷的可视化修改方法，在设置中打开如下界面即可进行快速配置。<br>![V7FW_U3JX@]R3_2CB8BHI9E.png](<a target="_blank" rel="noopener" href="https://pic2.zhimg.com/80/v2-52ee8971e6c71bcdaf16ec93d53ed1a3_720w.webp?source=1940ef5c">https://pic2.zhimg.com/80/v2-52ee8971e6c71bcdaf16ec93d53ed1a3_720w.webp?source=1940ef5c</a>)</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">Author: </span><span class="post-copyright-info"><a href="http://xichengchangjinglu.github.io">锡城长颈鹿</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">Link: </span><span class="post-copyright-info"><a href="http://xichengchangjinglu.github.io/2022/10/23/%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%BD%91%E7%BB%9C%E6%A8%A1%E5%9E%8B/">http://xichengchangjinglu.github.io/2022/10/23/%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%BD%91%E7%BB%9C%E6%A8%A1%E5%9E%8B/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">Copyright Notice: </span><span class="post-copyright-info">All articles in this blog are licensed under <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> unless stating additionally.</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E4%BB%8B%E7%BB%8D/">介绍</a></div><div class="post_share"><div class="social-share" data-image="https://www.leixue.com/uploads/2020/09/Cloud-computing.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="next-post pull-full"><a href="/2022/10/11/git%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/"><img class="next-cover" src="https://th.bing.com/th/id/R.900dada55f12a39dbcd23cafcee06372?rik=EczTBk84CIgocQ&amp;riu=http%3a%2f%2fupload-images.jianshu.io%2fupload_images%2f166109-e49ba9e2ca4e3dfd.gif&amp;ehk=qdHwSESN1jQaZ9KQ7U3dta3d5fZqyDIhlPnPsbkaKIw%3d&amp;risl=&amp;pid=ImgRaw&amp;r=0" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">Next Post</div><div class="next_info">git学习记录</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>Related Articles</span></div><div class="relatedPosts-list"><div><a href="/2022/07/31/%E5%B0%8F%E7%8B%97%E8%87%AA%E8%BF%B0/" title="“小狗自述”"><img class="cover" src="https://pic4.zhimg.com/v2-304492420c2e4dbdc1b9e3a00b0ea5af_b.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-07-31</div><div class="title">“小狗自述”</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="https://pic4.zhimg.com/v2-02a3ed4cbe7ddc41b144752c25388a7b_b.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">锡城长颈鹿</div><div class="author-info__description"></div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">16</div></a><a href="/tags/"><div class="headline">Tags</div><div class="length-num">10</div></a><a href="/categories/"><div class="headline">Categories</div><div class="length-num">0</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xichengchangjinglu"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>Catalog</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%BD%91%E7%BB%9C%E6%A8%A1%E5%9E%8B"><span class="toc-number">1.</span> <span class="toc-text">一、虚拟机网络模型</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%EF%BC%881%EF%BC%89%E6%A1%A5%E6%8E%A5%E6%A8%A1%E5%BC%8F%EF%BC%88Bridge-Adpater%EF%BC%89"><span class="toc-number">1.1.</span> <span class="toc-text">（1）桥接模式（Bridge Adpater）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%EF%BC%882%EF%BC%89NAT%E6%A8%A1%E5%BC%8F"><span class="toc-number">1.2.</span> <span class="toc-text">（2）NAT模式</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BA%8C%E3%80%81Ubuntu%E7%9A%84%E7%BD%91%E7%BB%9C%E9%85%8D%E7%BD%AE"><span class="toc-number">2.</span> <span class="toc-text">二、Ubuntu的网络配置</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%EF%BC%881%EF%BC%89%E7%BD%91%E7%BB%9C%E9%85%8D%E7%BD%AE%E5%B7%A5%E5%85%B7Netplan"><span class="toc-number">2.1.</span> <span class="toc-text">（1）网络配置工具Netplan</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%EF%BC%882%EF%BC%89%E7%BD%91%E7%BB%9C%E9%85%8D%E7%BD%AE%E5%AE%9E%E8%B7%B5"><span class="toc-number">2.2.</span> <span class="toc-text">（2）网络配置实践</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>Recent Post</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2022/10/23/%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%BD%91%E7%BB%9C%E6%A8%A1%E5%9E%8B/" title="虚拟机网络模型"><img src="https://www.leixue.com/uploads/2020/09/Cloud-computing.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="虚拟机网络模型"/></a><div class="content"><a class="title" href="/2022/10/23/%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%BD%91%E7%BB%9C%E6%A8%A1%E5%9E%8B/" title="虚拟机网络模型">虚拟机网络模型</a><time datetime="2022-10-23T13:40:32.563Z" title="Created 2022-10-23 21:40:32">2022-10-23</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2022/10/11/git%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/" title="git学习记录"><img src="https://th.bing.com/th/id/R.900dada55f12a39dbcd23cafcee06372?rik=EczTBk84CIgocQ&amp;riu=http%3a%2f%2fupload-images.jianshu.io%2fupload_images%2f166109-e49ba9e2ca4e3dfd.gif&amp;ehk=qdHwSESN1jQaZ9KQ7U3dta3d5fZqyDIhlPnPsbkaKIw%3d&amp;risl=&amp;pid=ImgRaw&amp;r=0" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="git学习记录"/></a><div class="content"><a class="title" href="/2022/10/11/git%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/" title="git学习记录">git学习记录</a><time datetime="2022-10-11T10:06:48.685Z" title="Created 2022-10-11 18:06:48">2022-10-11</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2022/09/14/YUM%E8%BD%AF%E4%BB%B6%E6%BA%90%E9%85%8D%E7%BD%AE/" title="YUM软件源配置"><img src="https://www.linuxidc.com/upload/2017_10/17100409209718.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="YUM软件源配置"/></a><div class="content"><a class="title" href="/2022/09/14/YUM%E8%BD%AF%E4%BB%B6%E6%BA%90%E9%85%8D%E7%BD%AE/" title="YUM软件源配置">YUM软件源配置</a><time datetime="2022-09-14T09:13:09.552Z" title="Created 2022-09-14 17:13:09">2022-09-14</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2022/09/09/Nginx%E9%85%8D%E7%BD%AE%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86/" title="Nginx配置反向代理"><img src="https://img1.sycdn.imooc.com/5979e29e00010efd13500750.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Nginx配置反向代理"/></a><div class="content"><a class="title" href="/2022/09/09/Nginx%E9%85%8D%E7%BD%AE%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86/" title="Nginx配置反向代理">Nginx配置反向代理</a><time datetime="2022-09-09T01:47:22.966Z" title="Created 2022-09-09 09:47:22">2022-09-09</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2022/09/04/Nginx%E7%9A%84%E5%9F%BA%E6%9C%AC%E9%85%8D%E7%BD%AE/" title="Nginx的基本配置"><img src="https://pic3.zhimg.com/v2-bfdefee39a52b1ab66af6ef1d29ef66e_1440w.jpg?source=172ae18b" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Nginx的基本配置"/></a><div class="content"><a class="title" href="/2022/09/04/Nginx%E7%9A%84%E5%9F%BA%E6%9C%AC%E9%85%8D%E7%BD%AE/" title="Nginx的基本配置">Nginx的基本配置</a><time datetime="2022-09-04T07:00:30.480Z" title="Created 2022-09-04 15:00:30">2022-09-04</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2022 By 锡城长颈鹿</div><div class="framework-info"><span>Framework </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>Theme </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="Read Mode"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="Switch Between Light And Dark Mode"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="Toggle between single-column and double-column"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="Setting"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="Table Of Contents"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="Back To Top"><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/medium-zoom/dist/medium-zoom.min.js"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
